@@ -1,0 +1,3 @@
+data:
+  eth_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/eth-prices.json'
+  gas_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/gas-prices.jsonl'

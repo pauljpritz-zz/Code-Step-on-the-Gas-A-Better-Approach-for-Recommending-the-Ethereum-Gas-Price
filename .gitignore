@@ -1,0 +1,5 @@
+__pychache__/*
+config/config.yaml
+data/
+results/
+*.egg-info/
