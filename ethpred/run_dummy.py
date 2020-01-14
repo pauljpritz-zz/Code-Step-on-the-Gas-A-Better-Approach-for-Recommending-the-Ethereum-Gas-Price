@@ -1,4 +1,4 @@
-from .pipeline.data_reader import read_data
+from .pipeline.generate_data import generate_data
 
 def run_dummy(cnf: dict):
-    read_data(cnf)
+    generate_data(cnf)

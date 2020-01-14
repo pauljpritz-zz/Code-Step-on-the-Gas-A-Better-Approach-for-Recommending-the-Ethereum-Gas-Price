@@ -1,3 +1,11 @@
+testing: True
 data:
   eth_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/eth-prices.json'
   gas_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/gas-prices.jsonl'
+model:
+  hidden_size: 64
+  input_size: 4
+  num_layers: 3
+  pred_steps: 16
+  dropout: 0.1
+  linear_units: 512
