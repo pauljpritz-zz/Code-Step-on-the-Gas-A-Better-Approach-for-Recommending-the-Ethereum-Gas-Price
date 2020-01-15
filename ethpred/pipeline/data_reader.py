@@ -1,4 +1,5 @@
 import json
+import gzip as gz
 from pprint import pprint
 
 
@@ -9,7 +10,7 @@ def read_data(cnf: dict):
 
 
     gas_price = []
-    with open(cnf['data']['gas_price_file'], 'r') as f:
+    with gz.open(cnf['data']['gas_price_file'], 'r') as f:
         if cnf['testing']:
             count = 0
             for line in f:

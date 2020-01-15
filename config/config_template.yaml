@@ -1,7 +1,13 @@
 testing: True
 data:
   eth_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/eth-prices.json'
-  gas_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/gas-prices.jsonl'
+  gas_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/gas-prices-with-timestamp-partial.jsonl.gz'
+  features:
+    - 'average_gas_price'
+    - 'contracts_tx_count'
+  nested_features:
+    - max_price_tx: 'gas_price'
+    - min_price_tx: 'gas_price'
 model:
   hidden_size: 64
   input_size: 4
