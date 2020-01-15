@@ -27,7 +27,9 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf_data: dict):
 
     eth_price_df = pd.DataFrame.from_dict(eth_prices)
     eth_price_df['date'] = pd.to_datetime(eth_price_df['date'], format='%Y-%m-%d')
+    eth_price_df = eth_price_df[cnf_data['eth_price_features']]
     # print(eth_price_df.head())
+
     gas_price_df = pd.DataFrame.from_dict(gas_price_dict, orient='index')
     # print(gas_price_df.head())
     gas_price_df = gas_price_df.dropna().sort_values(by='time')
@@ -36,5 +38,8 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf_data: dict):
 
     data = pd.merge_asof(gas_price_df, eth_price_df, left_on='time', right_on='date', direction='backward')
 
+    data = data[(data['time'] > cnf_data['start_date']) & (data['time'] <= cnf_data['end_date'])]
+
+    data = data.drop(columns=['time', 'date'])
 
     return data

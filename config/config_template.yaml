@@ -8,6 +8,11 @@ data:
   nested_features:
     - max_price_tx: 'gas_price'
     - min_price_tx: 'gas_price'
+  eth_price_features:
+    - 'open_price'
+    - 'date'
+  start_date: '2020-01-14'
+  end_date: '2020-01-15'
 model:
   hidden_size: 64
   input_size: 4

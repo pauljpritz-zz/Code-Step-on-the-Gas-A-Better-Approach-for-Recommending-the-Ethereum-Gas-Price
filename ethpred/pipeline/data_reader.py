@@ -16,7 +16,7 @@ def read_data(cnf: dict):
             for line in f:
                 gas_price.append(json.loads(line))
                 count += 1
-                if count >= 100:
+                if count >= 1000:
                     break
         else:
             for line in f:
