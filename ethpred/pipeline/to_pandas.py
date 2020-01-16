@@ -1,10 +1,11 @@
 from datetime import datetime
 import pandas as pd
+from .calc_distributions import generate_distribution
 
 
-def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf_data: dict):
-    features = cnf_data['features']
-    nested_features = cnf_data['nested_features']
+def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
+    features = cnf['data']['features']
+    nested_features = cnf['data']['nested_features']
 
     gas_price_dict = {}
     for obs in range(len(gas_price)):
@@ -25,22 +26,35 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf_data: dict):
             else:
                 gas_price_dict[obs][key] = None
 
+        if cnf['type'] == 'distribution' and 'transactions' in gas_price[obs]:
+            for i in range(len(gas_price[obs]['transactions'])):
+                gas_price_dict[obs]['mean'], gas_price_dict[obs]['std_dev'] = generate_distribution(
+                    gas_price[obs]['transactions'])
+                gas_price_dict[obs]['gas_price_' + str(i)] = gas_price[obs]['transactions'][i][
+                    'gas_price']
+
+    # print(gas_price_dict)
     eth_price_df = pd.DataFrame.from_dict(eth_prices)
     eth_price_df['date'] = pd.to_datetime(eth_price_df['date'], format='%Y-%m-%d')
-    eth_price_df = eth_price_df[cnf_data['eth_price_features']]
-    # print(eth_price_df.head())
+    eth_price_df = eth_price_df[cnf['data']['eth_price_features']]
 
     gas_price_df = pd.DataFrame.from_dict(gas_price_dict, orient='index')
     # print(gas_price_df.head())
-    gas_price_df = gas_price_df.dropna().sort_values(by='time')
-    eth_price_df = eth_price_df.dropna().sort_values(by='date')
+    gas_price_df = gas_price_df.dropna(axis='rows', subset=['time']).fillna(0).sort_values(
+        by='time')
+    eth_price_df = eth_price_df.dropna(axis='rows', subset=['date']).fillna(0).sort_values(
+        by='date')
+    # print("Gas price:", gas_price_df)
+    # print("ETH price:", eth_price_df)
 
+    data = pd.merge_asof(gas_price_df, eth_price_df, left_on='time', right_on='date',
+                         direction='backward')
+    # print("data:", data)
 
-    data = pd.merge_asof(gas_price_df, eth_price_df, left_on='time', right_on='date', direction='backward')
-
-    data = data[(data['time'] > cnf_data['start_date']) & (data['time'] <= cnf_data['end_date'])]
-
+    data = data[
+        (data['time'] > cnf['data']['start_date']) & (data['time'] <= cnf['data']['end_date'])]
     data = data.drop(columns=['time', 'date'])
+
     print(data.head())
 
     return data
