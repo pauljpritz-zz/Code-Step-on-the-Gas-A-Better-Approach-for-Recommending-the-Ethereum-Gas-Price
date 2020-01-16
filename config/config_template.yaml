@@ -1,4 +1,4 @@
-testing: True
+testing: False
 data:
   eth_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/eth-prices.json'
   gas_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/gas-prices-with-timestamp-partial.jsonl.gz'
@@ -12,11 +12,11 @@ data:
   eth_price_features:
     - 'open_price'
     - 'date'
-  start_date: '2020-01-14'
-  end_date: '2020-01-15'
+  start_date: '2020-01-01'
+  end_date: '2020-01-12'
   window_size: 50
   y_len: 20
-  sample_freq: 2
+  sample_freq: 10
   train_prop: 0.7
   batch_size: 32
   y_cols:

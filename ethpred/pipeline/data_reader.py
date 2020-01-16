@@ -6,7 +6,7 @@ from pprint import pprint
 def read_data(cnf: dict):
     with open(cnf['data']['eth_price_file']) as f:
         eth_price = json.load(f)
-    pprint(eth_price)
+    # pprint(eth_price)
 
 
     gas_price = []
@@ -21,6 +21,6 @@ def read_data(cnf: dict):
         else:
             for line in f:
                 gas_price.append(json.loads(line))
-    pprint(gas_price[0])
+    # pprint(gas_price[0])
 
     return eth_price, gas_price
