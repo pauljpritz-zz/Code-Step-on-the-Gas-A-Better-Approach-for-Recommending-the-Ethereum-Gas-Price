@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class SimpleGRU(nn.Module):
 
     def __init__(self,
@@ -22,9 +23,18 @@ class SimpleGRU(nn.Module):
 
     def forward(self, X):
         # TODO: Check what exact input shape we need here and if we need to expand it.
-        encoded = self.GRU_layer(X)
+        encoded = self.GRU(X)
         # Use the last hidden state of the GRU
         pred = self.linearLayer_1(encoded[0][:, 0])
         pred = self.act_func(pred)
         pred = self.linearLayer_2(pred)
         return pred
+
+
+def configure_SimpleGRU(cnf):
+    return SimpleGRU(hidden_size=cnf['hidden_size'],
+                     input_size=cnf['input_size'],
+                     num_layers=cnf["num_layers"],
+                     pred_steps=cnf['pred_steps'],
+                     linear_units=cnf['linear_units'],
+                     dropout=cnf['dropout'])

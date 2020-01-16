@@ -2,6 +2,7 @@ testing: True
 data:
   eth_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/eth-prices.json'
   gas_price_file: '/home/pjp18/Documents/marble_2020/data/marble-data/data/gas-prices-with-timestamp-partial.jsonl.gz'
+  # feature order is maintained, date is dropped
   features:
     - 'average_gas_price'
     - 'contracts_tx_count'
@@ -13,10 +14,26 @@ data:
     - 'date'
   start_date: '2020-01-14'
   end_date: '2020-01-15'
+  window_size: 50
+  y_len: 20
+  sample_freq: 2
+  train_prop: 0.7
+  batch_size: 32
+  y_cols:
+    - 0
 model:
   hidden_size: 64
-  input_size: 4
-  num_layers: 3
-  pred_steps: 16
+  input_size: 5
+  num_layers: 2
+  # pred_steps must match y_len
+  pred_steps: 20
   dropout: 0.1
   linear_units: 512
+training:
+  optimizer:
+    # pass in class available in torch.optim
+    class: RMSprop
+    args: {}
+  num_epochs: 20
+  learning_rate: 0.0001
+

@@ -41,5 +41,6 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf_data: dict):
     data = data[(data['time'] > cnf_data['start_date']) & (data['time'] <= cnf_data['end_date'])]
 
     data = data.drop(columns=['time', 'date'])
+    print(data.head())
 
     return data

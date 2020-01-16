@@ -26,6 +26,7 @@ def GRU_training(model,
             model.zero_grad()
             # Forward pass
             y_pred = model(x)
+            # y = torch.squeeze(y)
             loss = torch.sqrt(loss_fn(y_pred, y))
             train_res = float(loss.item())
 
