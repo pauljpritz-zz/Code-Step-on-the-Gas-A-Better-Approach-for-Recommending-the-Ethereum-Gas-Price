@@ -30,7 +30,7 @@ class DistributionGRU(nn.Module):
         encoded = self.GRU(X)
         # Use the last hidden state of the GRU
         pred = self.linearLayer_1(encoded[0][:, 0])
-        pred = self.act_func(pred)
+        # pred = self.act_func(pred)
         pred = self.linearLayer_2(pred)
         # Return two dimensions, one for mean one for std. dev.
         pred = pred.reshape([pred.shape[0], self.pred_steps, -1])

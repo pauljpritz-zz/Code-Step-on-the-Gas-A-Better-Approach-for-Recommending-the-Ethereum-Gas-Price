@@ -38,11 +38,14 @@ def generate_data(cnf: dict):
     train_len = int(data_len * cnf['data']['train_prop'])
     X_train, y_train = X[:train_len], y[:train_len]
     X_test, y_test = X[train_len:], y[train_len:]
+    return X_train, X_test, y_train, y_test
 
-    # Create dataloaders
+
+def create_dataloaders(X_train, y_train, X_test, y_test, cnf):
     train_dataloader = create_dataloader(X_train, y_train, cnf['data']['batch_size'])
     test_dataloader = create_dataloader(X_test, y_test, cnf['data']['batch_size'])
     return train_dataloader, test_dataloader
+
 
 
 def sliding_window(data: np.ndarray, cnf_data: dict):

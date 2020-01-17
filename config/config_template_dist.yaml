@@ -1,9 +1,9 @@
 testing: False
 # Denote the type of model you want: simple or distribution
-type: 'simple'
+type: 'distribution'
 data:
-  eth_price_file: '/home/hobbit/Documents/marble_data/eth-prices.json'
-  gas_price_file: '/home/hobbit/Documents/marble_data/gas-prices-with-txs-partial.jsonl.gz'
+  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
+  gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
   # feature order is maintained, date is dropped
   features:
     - 'average_gas_price'
@@ -15,13 +15,13 @@ data:
   eth_price_features:
     - 'open_price'
     - 'date'
-  start_date: '2020-01-15'
+  start_date: '2020-01-14'
   end_date: '2020-01-16'
   window_size: 50
   y_len: 2
   sample_freq: 10
   train_prop: 0.7
-  batch_size: 32
+  batch_size: 16
   y_cols:
     - 'average_gas_price'
 model:
@@ -37,9 +37,9 @@ training:
     # pass in class available in torch.optim
     class: Adam
     args: {}
-  num_epochs: 100
-  learning_rate: 0.001
-  log_path: '/home/hobbit/Documents/marble_logs/'
+  num_epochs: 50
+  learning_rate: 0.5
+  log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
   save_model: False
 

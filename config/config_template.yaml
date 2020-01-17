@@ -2,8 +2,8 @@ testing: True
 # Denote the type of model you want: simple or distribution
 type: 'simple'
 data:
-  eth_price_file: '/home/hobbit/Documents/marble_data/eth-prices.json'
-  gas_price_file: '/home/hobbit/Documents/marble_data/gas-prices-with-timestamp-partial.jsonl.gz'
+  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
+  gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-timestamp-partial.jsonl.gz'
   # feature order is maintained, date is dropped
   features:
     - 'average_gas_price'
