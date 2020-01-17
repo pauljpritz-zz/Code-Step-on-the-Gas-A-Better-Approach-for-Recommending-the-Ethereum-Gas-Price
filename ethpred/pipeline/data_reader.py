@@ -26,7 +26,7 @@ def read_data(cnf: dict):
                 if 'timestamp' in current:
                     gas_price.append(current)
                     time = datetime.fromtimestamp(current['timestamp'])
-                    if time <= start_time or time > end_time:
+                    if time < start_time or time > end_time:
                         break
 
     return eth_price, gas_price

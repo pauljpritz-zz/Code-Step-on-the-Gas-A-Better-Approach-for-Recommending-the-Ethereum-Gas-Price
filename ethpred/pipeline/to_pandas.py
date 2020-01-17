@@ -12,7 +12,7 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
 
     data = join_datasets(cnf, eth_prices, gas_price_dict)
 
-    normalise_data(data, cnf)
+    data = normalise_data(data, cnf)
 
     print(data.head())
 
@@ -69,17 +69,33 @@ def join_datasets(cnf, eth_prices, gas_price_dict):
 
     return data
 
+def scale_array(array, scale_method):
+    if scale_method == 'log':
+        col = np.log(array)
+        col[np.isneginf(col)] = 0
+        return col
+    elif scale_method == 'minmax':
+        min_value = np.min(array)
+        result = (array - min_value) / (np.max(array) - min_value)
+        return result.fillna(0)
+
+
+def remove_outliers(data: pd.DataFrame, columns):
+    for column in columns:
+        if column not in data:
+            continue
+        series = data[column]
+        mean = series.mean()
+        stdev = series.std()
+        data = data[(series - mean).abs() <= 3 * stdev]
+    return data
+
+
 def normalise_data(data: pd.DataFrame, cnf):
-    print(data[data['std_dev'] <= 0 ])
-    cnf_copy = copy.deepcopy(cnf)
-    if cnf_copy['type'] == 'distribution':
-        cnf_copy['data']['scaling'].append({'mean': cnf_copy['data']['dist_scaling']})
-        cnf_copy['data']['scaling'].append({'std_dev': cnf_copy['data']['dist_scaling']})
-
-    for scale_dict in cnf_copy['data']['scaling']:
-        key, val = list(scale_dict.items())[0]
-        if val == 'log':
-            col = np.log(data[key])
-            col[np.isneginf(col)] = 0
-            data[key] = col
-
+    data = remove_outliers(data, cnf['data'].get('remove_outliers', []))
+    scaling = cnf['data']['scaling']
+    for column in scaling['columns']:
+        if column in data:
+            data[column] = scale_array(data[column], scaling['normalizer'])
+    print('after scaling\n', data.head())
+    return data

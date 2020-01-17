@@ -9,5 +9,5 @@ def read_config(file: str) -> dict:
     """
     global cfg
     with open(file, 'r') as ymlfile:
-        cfg = yaml.load(ymlfile)
+        cfg = yaml.load(ymlfile, Loader=yaml.CLoader)
     return cfg
