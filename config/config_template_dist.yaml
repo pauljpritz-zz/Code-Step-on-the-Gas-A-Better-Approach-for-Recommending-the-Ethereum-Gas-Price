@@ -7,7 +7,7 @@ data:
   # feature order is maintained, date is dropped
   features:
     - 'average_gas_price'
-    - 'contracts_tx_count'
+    - 'tx_count'
   nested_features:
     - max_price_tx: 'gas_price'
     - min_price_tx: 'gas_price'
@@ -15,30 +15,35 @@ data:
   eth_price_features:
     - 'open_price'
     - 'date'
-  start_date: '2020-01-14'
+  start_date: '2020-01-09'
   end_date: '2020-01-16'
   window_size: 50
-  y_len: 2
+  y_len: 10
   sample_freq: 10
   train_prop: 0.7
-  batch_size: 16
+  batch_size: 32
   y_cols:
     - 'average_gas_price'
+  scaling:
+    - average_gas_price: 'log'
+    - max_price_tx: 'log'
+    - min_price_tx: 'log'
+  dist_scaling: 'log'
 model:
-  hidden_size: 128
+  hidden_size: 64
   input_size: 5
   num_layers: 2
   # pred_steps must match y_len
-  pred_steps: 2
+  pred_steps: 10
   dropout: 0.1
   linear_units: 512
 training:
   optimizer:
     # pass in class available in torch.optim
-    class: Adam
+    class: RMSprop
     args: {}
-  num_epochs: 100
-  learning_rate: 0.5
+  num_epochs: 20
+  learning_rate: 0.005
   log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
   save_model: False

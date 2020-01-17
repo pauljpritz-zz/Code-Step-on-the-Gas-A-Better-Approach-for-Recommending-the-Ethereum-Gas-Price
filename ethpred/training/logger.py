@@ -58,14 +58,13 @@ class Logger:
             std_pred = y_pred[:, 1]
             mean = y_test[:, 0]
             std = y_test[:, 1]
-            print(mean.shape)
 
             x = np.arange(mean.shape[0])
             plt.figure(figsize=(14, 8))
             plt.plot(x, mean, color='b', label='True')
-            plt.fill_between(x, mean-1.96*std, mean+1.96*std, color='royalblue')
+            plt.fill_between(x, mean-1.96*std, mean+1.96*std, color='royalblue', alpha=0.5)
             plt.plot(x, mean_pred, color='r', label='Predicted')
-            plt.fill_between(x, mean_pred-1.96*std_pred, mean_pred+1.96*std_pred, color='tomato')
+            plt.fill_between(x, mean_pred-1.96*std_pred, mean_pred+1.96*std_pred, color='tomato', alpha=0.5)
             plt.legend()
             plt.savefig(self.save_path + 'test_prediction_example.png')
             if self.cnf['training']['show_plots']:

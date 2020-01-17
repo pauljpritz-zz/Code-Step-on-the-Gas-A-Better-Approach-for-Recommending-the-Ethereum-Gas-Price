@@ -35,6 +35,7 @@ def GRU_training(model,
             # y = torch.squeeze(y)
             loss = torch.sqrt(loss_fn(y_pred, y))
             train_res = float(loss.item())
+            print(train_res)
 
             # print('loss:', train_res)
 

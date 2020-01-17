@@ -1,7 +1,8 @@
 from datetime import datetime
 import pandas as pd
+import numpy as np
+import copy
 from .calc_distributions import generate_distribution
-
 
 def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
     features = cnf['data']['features']
@@ -9,8 +10,9 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
 
     gas_price_dict = parse_gas_price_data(cnf, features, gas_price, nested_features)
 
-    # print(gas_price_dict)
     data = join_datasets(cnf, eth_prices, gas_price_dict)
+
+    normalise_data(data, cnf)
 
     print(data.head())
 
@@ -66,3 +68,18 @@ def join_datasets(cnf, eth_prices, gas_price_dict):
     data = data.drop(columns=['time', 'date'])
 
     return data
+
+def normalise_data(data: pd.DataFrame, cnf):
+    print(data[data['std_dev'] <= 0 ])
+    cnf_copy = copy.deepcopy(cnf)
+    if cnf_copy['type'] == 'distribution':
+        cnf_copy['data']['scaling'].append({'mean': cnf_copy['data']['dist_scaling']})
+        cnf_copy['data']['scaling'].append({'std_dev': cnf_copy['data']['dist_scaling']})
+
+    for scale_dict in cnf_copy['data']['scaling']:
+        key, val = list(scale_dict.items())[0]
+        if val == 'log':
+            col = np.log(data[key])
+            col[np.isneginf(col)] = 0
+            data[key] = col
+

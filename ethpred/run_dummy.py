@@ -6,6 +6,10 @@ from .training.logger import Logger
 
 def run_dummy(cnf: dict):
     X_train, X_test, y_train, y_test = generate_data(cnf)
+
+    print(X_train[0])
+    print(y_train[0])
+
     train, test = create_dataloaders(X_train, y_train, X_test, y_test, cnf)
     model = configure_model(cnf)
 
