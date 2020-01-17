@@ -28,7 +28,6 @@ def GRU_training(model,
             y_pred = model(x)
             loss = torch.sqrt(loss_fn(y_pred, y))
             train_res = float(loss.item())
-            print(train_res)
             # Backward pass
             loss.backward()
 
