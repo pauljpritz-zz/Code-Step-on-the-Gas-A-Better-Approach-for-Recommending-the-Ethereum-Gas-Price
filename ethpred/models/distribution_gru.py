@@ -26,7 +26,6 @@ class DistributionGRU(nn.Module):
                                        out_features=pred_steps * self.num_pred_dims)
 
     def forward(self, X):
-        # TODO: Check what exact input shape we need here and if we need to expand it.
         encoded = self.GRU(X)
         # Use the last hidden state of the GRU
         pred = self.linearLayer_1(encoded[0][:, 0])

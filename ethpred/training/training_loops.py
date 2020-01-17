@@ -26,19 +26,9 @@ def GRU_training(model,
             model.zero_grad()
             # Forward pass
             y_pred = model(x)
-
-            # print("y_pred shape:", y_pred.shape)
-            # print('y shape:', y.shape)
-            # print("y_pred:", y_pred[0])
-            # print("y:", y[0])
-
-            # y = torch.squeeze(y)
             loss = torch.sqrt(loss_fn(y_pred, y))
             train_res = float(loss.item())
             print(train_res)
-
-            # print('loss:', train_res)
-
             # Backward pass
             loss.backward()
 

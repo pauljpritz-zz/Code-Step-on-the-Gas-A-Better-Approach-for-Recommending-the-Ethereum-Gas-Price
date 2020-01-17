@@ -22,7 +22,6 @@ class SimpleGRU(nn.Module):
         self.linearLayer_2 = nn.Linear(in_features=linear_units, out_features=pred_steps)
 
     def forward(self, X):
-        # TODO: Check what exact input shape we need here and if we need to expand it.
         encoded = self.GRU(X)
         # Use the last hidden state of the GRU
         pred = self.linearLayer_1(encoded[0][:, 0])
