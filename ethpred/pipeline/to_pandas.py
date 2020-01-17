@@ -27,11 +27,13 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
                 gas_price_dict[obs][key] = None
 
         if cnf['type'] == 'distribution' and 'transactions' in gas_price[obs]:
-            for i in range(len(gas_price[obs]['transactions'])):
-                gas_price_dict[obs]['mean'], gas_price_dict[obs]['std_dev'] = generate_distribution(
-                    gas_price[obs]['transactions'])
-                gas_price_dict[obs]['gas_price_' + str(i)] = gas_price[obs]['transactions'][i][
-                    'gas_price']
+            gas_price_dict[obs]['mean'], gas_price_dict[obs]['std_dev'] = generate_distribution(
+                gas_price[obs]['transactions'])
+
+            if cnf['data']['inc_transactions']:
+                for i in range(len(gas_price[obs]['transactions'])):
+                    gas_price_dict[obs]['gas_price_' + str(i)] = gas_price[obs]['transactions'][i][
+                        'gas_price']
 
     # print(gas_price_dict)
     eth_price_df = pd.DataFrame.from_dict(eth_prices)

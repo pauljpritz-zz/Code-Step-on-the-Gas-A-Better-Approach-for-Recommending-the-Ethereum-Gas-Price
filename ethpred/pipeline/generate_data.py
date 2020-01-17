@@ -30,7 +30,7 @@ def generate_data(cnf: dict):
     print("X shape:", X.shape)
     print("y shape:", y.shape)
 
-    # Adjust the input size of the model is necessary (needed if all transactions are included
+    # Adjust the input size of the model is necessary (needed if all transactions are included)
     cnf['model']['input_size'] = X.shape[2]
 
     # Split into training and testing data

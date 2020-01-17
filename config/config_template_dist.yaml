@@ -1,6 +1,6 @@
-testing: True
+testing: False
 # Denote the type of model you want: simple or distribution
-type: 'distribution'
+type: 'simple'
 data:
   eth_price_file: '/home/hobbit/Documents/marble_data/eth-prices.json'
   gas_price_file: '/home/hobbit/Documents/marble_data/gas-prices-with-txs-partial.jsonl.gz'
@@ -11,31 +11,35 @@ data:
   nested_features:
     - max_price_tx: 'gas_price'
     - min_price_tx: 'gas_price'
+  inc_transactions: False
   eth_price_features:
     - 'open_price'
     - 'date'
-  start_date: '2020-01-01'
+  start_date: '2020-01-15'
   end_date: '2020-01-16'
   window_size: 50
-  y_len: 20
+  y_len: 2
   sample_freq: 10
   train_prop: 0.7
   batch_size: 32
   y_cols:
     - 'average_gas_price'
 model:
-  hidden_size: 64
+  hidden_size: 128
   input_size: 5
   num_layers: 2
   # pred_steps must match y_len
-  pred_steps: 20
+  pred_steps: 2
   dropout: 0.1
   linear_units: 512
 training:
   optimizer:
     # pass in class available in torch.optim
-    class: RMSprop
+    class: Adam
     args: {}
-  num_epochs: 20
-  learning_rate: 0.0001
+  num_epochs: 100
+  learning_rate: 0.001
+  log_path: '/home/hobbit/Documents/marble_logs/'
+  show_plots: True
+  save_model: False
 

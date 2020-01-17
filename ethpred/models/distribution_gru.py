@@ -29,7 +29,6 @@ class DistributionGRU(nn.Module):
         # TODO: Check what exact input shape we need here and if we need to expand it.
         encoded = self.GRU(X)
         # Use the last hidden state of the GRU
-        print('Encoded:', encoded[0][:, 0].shape)
         pred = self.linearLayer_1(encoded[0][:, 0])
         pred = self.act_func(pred)
         pred = self.linearLayer_2(pred)
