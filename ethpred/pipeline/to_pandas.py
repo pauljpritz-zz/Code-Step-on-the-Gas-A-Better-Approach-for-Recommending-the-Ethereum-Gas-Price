@@ -7,6 +7,17 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
     features = cnf['data']['features']
     nested_features = cnf['data']['nested_features']
 
+    gas_price_dict = parse_gas_price_data(cnf, features, gas_price, nested_features)
+
+    # print(gas_price_dict)
+    data = join_datasets(cnf, eth_prices, gas_price_dict)
+
+    print(data.head())
+
+    return data
+
+
+def parse_gas_price_data(cnf, features, gas_price, nested_features):
     gas_price_dict = {}
     for obs in range(len(gas_price)):
         gas_price_dict[obs] = {}
@@ -34,29 +45,24 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
                 for i in range(len(gas_price[obs]['transactions'])):
                     gas_price_dict[obs]['gas_price_' + str(i)] = gas_price[obs]['transactions'][i][
                         'gas_price']
+    return gas_price_dict
 
-    # print(gas_price_dict)
+
+def join_datasets(cnf, eth_prices, gas_price_dict):
     eth_price_df = pd.DataFrame.from_dict(eth_prices)
     eth_price_df['date'] = pd.to_datetime(eth_price_df['date'], format='%Y-%m-%d')
     eth_price_df = eth_price_df[cnf['data']['eth_price_features']]
-
     gas_price_df = pd.DataFrame.from_dict(gas_price_dict, orient='index')
-    # print(gas_price_df.head())
+
     gas_price_df = gas_price_df.dropna(axis='rows', subset=['time']).fillna(0).sort_values(
         by='time')
     eth_price_df = eth_price_df.dropna(axis='rows', subset=['date']).fillna(0).sort_values(
         by='date')
-    # print("Gas price:", gas_price_df)
-    # print("ETH price:", eth_price_df)
-
     data = pd.merge_asof(gas_price_df, eth_price_df, left_on='time', right_on='date',
                          direction='backward')
-    # print("data:", data)
-
     data = data[
         (data['time'] > cnf['data']['start_date']) & (data['time'] <= cnf['data']['end_date'])]
-    data = data.drop(columns=['time', 'date'])
 
-    print(data.head())
+    data = data.drop(columns=['time', 'date'])
 
     return data

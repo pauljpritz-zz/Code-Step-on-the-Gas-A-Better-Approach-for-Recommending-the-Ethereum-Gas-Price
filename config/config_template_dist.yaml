@@ -37,7 +37,7 @@ training:
     # pass in class available in torch.optim
     class: Adam
     args: {}
-  num_epochs: 50
+  num_epochs: 100
   learning_rate: 0.5
   log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
