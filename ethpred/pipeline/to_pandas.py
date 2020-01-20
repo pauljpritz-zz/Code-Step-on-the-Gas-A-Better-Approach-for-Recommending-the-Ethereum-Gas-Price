@@ -4,6 +4,7 @@ import numpy as np
 import copy
 from .calc_distributions import generate_distribution
 
+
 def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
     features = cnf['data']['features']
     nested_features = cnf['data']['nested_features']
@@ -51,8 +52,13 @@ def parse_gas_price_data(cnf, features, gas_price, nested_features):
 
 
 def join_datasets(cnf, eth_prices, gas_price_dict):
-    eth_price_df = pd.DataFrame.from_dict(eth_prices)
-    eth_price_df['date'] = pd.to_datetime(eth_price_df['date'], format='%Y-%m-%d')
+    if isinstance(eth_prices, dict):
+        eth_price_df = pd.DataFrame.from_dict(eth_prices)
+    elif isinstance(eth_prices, pd.DataFrame):
+        eth_price_df = eth_prices
+    else:
+        raise NotImplementedError
+    eth_price_df['date'] = pd.to_datetime(eth_price_df['date'])
     eth_price_df = eth_price_df[cnf['data']['eth_price_features']]
     gas_price_df = pd.DataFrame.from_dict(gas_price_dict, orient='index')
 
@@ -60,14 +66,25 @@ def join_datasets(cnf, eth_prices, gas_price_dict):
         by='time')
     eth_price_df = eth_price_df.dropna(axis='rows', subset=['date']).fillna(0).sort_values(
         by='date')
+
     data = pd.merge_asof(gas_price_df, eth_price_df, left_on='time', right_on='date',
                          direction='backward')
+    data.set_index('time', inplace=True, drop=False)
+
+    # Add the lagged columns if any
+    lag_cols = cnf['data']['lagged_cols']
+    lagged_data = pd.DataFrame(data[lag_cols], index=data.index)
+    lagged_data = lagged_data.shift(1, freq='D')
+    lagged_data.columns = [i + '_lagged' for i in lag_cols]
+
+    data = pd.merge_asof(data, lagged_data, left_index=True, right_index=True, direction='nearest')
     data = data[
         (data['time'] > cnf['data']['start_date']) & (data['time'] <= cnf['data']['end_date'])]
 
     data = data.drop(columns=['time', 'date'])
 
     return data
+
 
 def scale_array(array, scale_method):
     if scale_method == 'log':
@@ -97,5 +114,5 @@ def normalise_data(data: pd.DataFrame, cnf):
     for column in scaling['columns']:
         if column in data:
             data[column] = scale_array(data[column], scaling['normalizer'])
-    print('after scaling\n', data.head())
+    # print('after scaling\n', data.head())
     return data

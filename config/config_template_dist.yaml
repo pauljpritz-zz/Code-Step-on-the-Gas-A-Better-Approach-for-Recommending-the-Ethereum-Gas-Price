@@ -1,8 +1,9 @@
 testing: False
 # Denote the type of model you want: simple or distribution
-type: 'simple'
+type: 'distribution'
 data:
-  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
+#  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
+  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices-ticks.csv'
   gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
   features:
     - 'average_gas_price'
@@ -12,14 +13,16 @@ data:
     - min_price_tx: 'gas_price'
   inc_transactions: False
   eth_price_features:
-    - 'open_price'
+    - 'value'
     - 'date'
-  start_date: '2020-01-14'
-  end_date: '2020-01-16'
-  window_size: 50
+  lagged_cols:
+    - average_gas_price
+  start_date: '2020-01-08'
+  end_date: '2020-01-13'
+  window_size: 2
   y_len: 2
   sample_freq: 3
-  train_prop: 0.7
+  train_prop: 0.8
   batch_size: 32
   y_cols:
     - 'average_gas_price'
@@ -28,10 +31,11 @@ data:
     normalizer: minmax
     columns:
       - average_gas_price
+      - average_gas_price_lagged
       - max_price_tx
       - min_price_tx
       - tx_count
-      - open_price
+      - value
       - mean
       - std_dev
   remove_outliers:
@@ -40,7 +44,7 @@ data:
     - min_price_tx
     - mean
     - std_dev
-    - open_price
+    - value
 model:
   hidden_size: 64
   input_size: 5
@@ -52,9 +56,9 @@ model:
 training:
   optimizer:
     # pass in class available in torch.optim
-    class: RMSprop
+    class: Adam
     args: {}
-  num_epochs: 10
+  num_epochs: 15
   learning_rate: 0.035
   log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
