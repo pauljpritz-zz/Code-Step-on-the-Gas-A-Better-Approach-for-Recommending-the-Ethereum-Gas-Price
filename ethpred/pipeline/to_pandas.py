@@ -14,11 +14,12 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
 
     data = join_datasets(cnf, eth_prices, gas_price_dict)
 
-    data = normalise_data(data, cnf)
 
     print("before resampling: \n", data.head())
 
     data = resample_data(data, cnf)
+    data = normalise_data(data, cnf)
+    print(data[data.isna().any(axis=1)])
 
     print(data.head())
 
@@ -28,6 +29,7 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
 def resample_data(data: pd.DataFrame, cnf: dict):
     if cnf['data']['resample']:
         data = data.resample(cnf['data']['resample']).mean()
+        data = data.fillna(method='pad')
     return data
 
 
@@ -115,7 +117,7 @@ def remove_outliers(data: pd.DataFrame, columns):
         series = data[column]
         mean = series.mean()
         stdev = series.std()
-        data = data[(series - mean).abs() <= 2 * stdev]
+        data = data[(series - mean).abs() <= 1.5 * stdev]
     return data
 
 

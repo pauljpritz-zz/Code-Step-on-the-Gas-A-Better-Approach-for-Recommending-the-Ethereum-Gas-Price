@@ -5,6 +5,7 @@ data:
 #  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
   eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices-ticks.csv'
   gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
+  data_path: '/home/pjp18/Documents/marble_data/prep.pickle'
   features:
     - 'average_gas_price'
     - 'tx_count'
@@ -17,7 +18,7 @@ data:
     - 'date'
   lagged_cols:
     - average_gas_price
-  start_date: '2019-11-15'
+  start_date: '2019-11-01'
   end_date: '2019-11-30'
   window_size: 80
   y_len: 2
@@ -61,7 +62,7 @@ training:
     class: Adam
     args: {}
   num_epochs: 40
-  learning_rate: 0.01
+  learning_rate: 0.009
   log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
   save_model: False

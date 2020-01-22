@@ -10,14 +10,15 @@ import torch
 import yaml
 
 from ..pipeline.generate_data import generate_data
-
+from ..pipeline.generate_data import sliding_window
 
 class Logger:
-    def __init__(self, cnf):
+    def __init__(self, cnf, data=None):
         self.cnf = cnf
         self.timestamp = datetime.now().strftime("%Y-%m-%dT%H_%M_%S.%f")
         self.save_path = path.join(cnf['training']['log_path'],
                                    'model_' + str(self.timestamp) + '/')
+        self.data = data
 
     def plot_loss_hist(self, hist_train, hist_test):
         plt.figure(figsize=(14, 8))
@@ -45,11 +46,42 @@ class Logger:
     def generate_prediction_example(self, model):
         gen_cnf = copy.deepcopy(self.cnf)
         gen_cnf['data']['sample_freq'] = gen_cnf['data']['y_len']
-        X_train, X_test, y_train, y_test = generate_data(gen_cnf)
-        X_test = torch.from_numpy(X_test).float()
-        y_test = torch.from_numpy(y_test).float()
-        X_train = torch.from_numpy(X_train).float()
-        y_train = torch.from_numpy(y_train).float()
+
+
+        if self.data is not None:
+            if gen_cnf['type'] == 'distribution':
+                gen_cnf['data']['y_cols'] = ['mean', 'std_dev']
+            y_col_idxs = []
+            for col in gen_cnf['data']['y_cols']:
+                idx = self.data.columns.get_loc(col)
+                y_col_idxs.append(idx)
+
+            data = self.data.to_numpy()
+
+            X, y = sliding_window(data, gen_cnf['data'])
+
+            y = y[:, :, y_col_idxs]
+            y = np.squeeze(y)
+
+            print("X shape:", X.shape)
+            print("y shape:", y.shape)
+
+            # Adjust the input size of the model is necessary (needed if all transactions are included)
+            gen_cnf['model']['input_size'] = X.shape[2]
+
+            # Split into training and testing data
+            data_len = X.shape[0]
+            train_len = int(data_len * gen_cnf['data']['train_prop'])
+            X_train, y_train = X[:train_len], y[:train_len]
+            X_test, y_test = X[train_len:], y[train_len:]
+
+
+        else:
+            X_train, X_test, y_train, y_test = generate_data(gen_cnf)
+            X_test = torch.from_numpy(X_test).float()
+            y_test = torch.from_numpy(y_test).float()
+            X_train = torch.from_numpy(X_train).float()
+            y_train = torch.from_numpy(y_train).float()
 
         with torch.no_grad():
             y_pred = model(X_test)
@@ -72,11 +104,12 @@ class Logger:
         else:
             y_pred_train = y_pred_train.reshape(-1)
             y_train = y_train.reshape(-1)
+
             y_pred = y_pred.reshape(-1)
             y_test = y_test.reshape(-1)
 
-            y_pred = np.concatenate(y_pred_train, y_pred)
-            y_test = np.concatenate(y_train, y_test)
+            y_pred = torch.cat((y_pred_train, y_pred))
+            y_test = torch.cat((y_train, y_test))
 
             x = np.arange(y_pred.shape[0])
             plt.plot(x, y_test, color='b', label='True')
