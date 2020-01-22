@@ -78,10 +78,11 @@ class Logger:
 
         else:
             X_train, X_test, y_train, y_test = generate_data(gen_cnf)
-            X_test = torch.from_numpy(X_test).float()
-            y_test = torch.from_numpy(y_test).float()
-            X_train = torch.from_numpy(X_train).float()
-            y_train = torch.from_numpy(y_train).float()
+
+        X_test = torch.from_numpy(X_test).float()
+        y_test = torch.from_numpy(y_test).float()
+        X_train = torch.from_numpy(X_train).float()
+        y_train = torch.from_numpy(y_train).float()
 
         with torch.no_grad():
             y_pred = model(X_test)

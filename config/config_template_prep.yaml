@@ -18,9 +18,9 @@ data:
     - 'date'
   lagged_cols:
     - average_gas_price
-  start_date: '2019-11-01'
+  start_date: '2019-11-15'
   end_date: '2019-11-30'
-  window_size: 80
+  window_size: 65
   y_len: 2
   sample_freq: 1
   train_prop: 0.7
@@ -49,7 +49,7 @@ data:
   # Set to False to disable resampling
   resample: 20T
 model:
-  hidden_size: 256
+  hidden_size: 128
   input_size: 5
   num_layers: 2
   # pred_steps must match y_len
@@ -61,8 +61,8 @@ training:
     # pass in class available in torch.optim
     class: Adam
     args: {}
-  num_epochs: 40
-  learning_rate: 0.009
+  num_epochs: 80
+  learning_rate: 0.0019
   log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
   save_model: False

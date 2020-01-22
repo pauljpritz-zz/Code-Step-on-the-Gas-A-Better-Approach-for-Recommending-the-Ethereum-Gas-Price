@@ -13,6 +13,7 @@ def prep_data(cnf: dict):
     eth_price, gas_price = read_data(cnf)
     data = convert_to_dataframe(eth_price, gas_price, cnf)
     data.to_pickle(cnf['data']['data_path'])
+    print("Data saved to: ", cnf['data']['data_path'])
 
 
 def run_prepped(cnf: dict):
@@ -29,6 +30,7 @@ def run_prepped(cnf: dict):
         idx = data.columns.get_loc(col)
         y_col_idxs.append(idx)
 
+    data_df = data.copy()
     data = data.to_numpy()
 
     X, y = sliding_window(data, cnf['data'])
@@ -54,7 +56,7 @@ def run_prepped(cnf: dict):
     train, test = create_dataloaders(X_train, y_train, X_test, y_test, cnf)
     model = configure_model(cnf)
 
-    logger = Logger(cnf)
+    logger = Logger(cnf, data=data_df)
 
     GRU_training(model=model,
                  train_dataloader=train,

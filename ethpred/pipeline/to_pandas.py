@@ -18,7 +18,9 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
     print("before resampling: \n", data.head())
 
     data = resample_data(data, cnf)
+
     data = normalise_data(data, cnf)
+
     print(data[data.isna().any(axis=1)])
 
     print(data.head())
