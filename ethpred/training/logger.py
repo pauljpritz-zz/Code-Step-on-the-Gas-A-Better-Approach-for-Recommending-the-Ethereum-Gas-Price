@@ -48,9 +48,12 @@ class Logger:
         X_train, X_test, y_train, y_test = generate_data(gen_cnf)
         X_test = torch.from_numpy(X_test).float()
         y_test = torch.from_numpy(y_test).float()
+        X_train = torch.from_numpy(X_train).float()
+        y_train = torch.from_numpy(y_train).float()
 
         with torch.no_grad():
             y_pred = model(X_test)
+            y_pred_train = model(X_train)
 
         plt.figure(figsize=(14, 8))
         if gen_cnf['type'] == 'distribution':
@@ -67,8 +70,14 @@ class Logger:
             plt.plot(x, mean_pred, color='r', label='Predicted')
             plt.fill_between(x, mean_pred-1.96*std_pred, mean_pred+1.96*std_pred, color='tomato', alpha=0.5)
         else:
+            y_pred_train = y_pred_train.reshape(-1)
+            y_train = y_train.reshape(-1)
             y_pred = y_pred.reshape(-1)
             y_test = y_test.reshape(-1)
+
+            y_pred = np.concatenate(y_pred_train, y_pred)
+            y_test = np.concatenate(y_train, y_test)
+
             x = np.arange(y_pred.shape[0])
             plt.plot(x, y_test, color='b', label='True')
             plt.plot(x, y_pred, color='r', label='Predicted')

@@ -27,6 +27,7 @@ def GRU_training(model,
             # Forward pass
             y_pred = model(x)
             loss = torch.sqrt(loss_fn(y_pred, y))
+            # loss = loss_fn(y_pred, y)
             train_res = float(loss.item())
             # Backward pass
             loss.backward()
@@ -46,7 +47,8 @@ def GRU_training(model,
             model.zero_grad()
             with torch.no_grad():
                 y_test_pred = model(x_test)
-                test_res = float(torch.sqrt(loss_fn(y_test_pred, y_test)).item())
+                # test_res = float(torch.sqrt(loss_fn(y_test_pred, y_test)).item())
+                test_res = float(loss_fn(y_test_pred, y_test).item())
                 test_batch_losses += test_res
                 len_test += 1
         test_loss = test_batch_losses / len_test

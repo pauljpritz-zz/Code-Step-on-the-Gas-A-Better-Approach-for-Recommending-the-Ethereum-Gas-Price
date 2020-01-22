@@ -23,9 +23,9 @@ def generate_data(cnf: dict):
     data = data.to_numpy()
 
     X, y = sliding_window(data, cnf['data'])
+
     y = y[:, :, y_col_idxs]
     y = np.squeeze(y)
-
 
     print("X shape:", X.shape)
     print("y shape:", y.shape)

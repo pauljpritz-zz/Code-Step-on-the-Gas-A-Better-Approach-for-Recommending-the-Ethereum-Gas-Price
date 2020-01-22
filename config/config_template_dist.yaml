@@ -3,8 +3,8 @@ testing: False
 type: 'simple'
 data:
 #  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
-  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices-ticks.csv'
-  gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
+  eth_price_file: '/home/hobbit/Documents/marble_data/eth-prices-ticks.csv'
+  gas_price_file: '/home/hobbit/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
   features:
     - 'average_gas_price'
     - 'tx_count'
@@ -17,11 +17,11 @@ data:
     - 'date'
   lagged_cols:
     - average_gas_price
-  start_date: '2020-01-07'
-  end_date: '2020-01-10'
+  start_date: '2020-01-12'
+  end_date: '2020-01-16'
   window_size: 24
   y_len: 2
-  sample_freq: 10
+  sample_freq: 1
   train_prop: 0.7
   batch_size: 16
   y_cols:
@@ -46,9 +46,9 @@ data:
     - std_dev
     - value
   # Set to False to disable resampling
-  resample: 60T
+  resample: 10T
 model:
-  hidden_size: 64
+  hidden_size: 256
   input_size: 5
   num_layers: 2
   # pred_steps must match y_len
@@ -58,11 +58,11 @@ model:
 training:
   optimizer:
     # pass in class available in torch.optim
-    class: RMSprop
+    class: Adam
     args: {}
   num_epochs: 20
-  learning_rate: 0.03
-  log_path: '/home/pjp18/Documents/marble_logs/'
+  learning_rate: 0.009
+  log_path: '/home/hobbit/Documents/marble_logs/'
   show_plots: True
   save_model: False
 
