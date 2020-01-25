@@ -36,6 +36,7 @@ class GethPredictor:
         Args:
             block_number: Block number for which the price should be predicted.
                           Block must be in the min_prices give during initialization
+        Returns: gas price
         """
         max_empty = self.blocks_count // 2
         prices = []
