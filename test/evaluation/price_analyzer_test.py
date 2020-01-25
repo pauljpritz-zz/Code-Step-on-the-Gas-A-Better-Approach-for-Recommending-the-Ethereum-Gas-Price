@@ -1,6 +1,6 @@
 import unittest
 
-from ethpred.baseline.price_analyzer import PriceAnalyzer
+from ethpred.evaluation.price_analyzer import PriceAnalyzer
 
 
 class PriceAnalyzerTest(unittest.TestCase):
