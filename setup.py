@@ -9,5 +9,6 @@ setup(
         "matplotlib",
         "tqdm",
         "pandas",
-    ]
+        "pyyaml",
+    ],
 )
