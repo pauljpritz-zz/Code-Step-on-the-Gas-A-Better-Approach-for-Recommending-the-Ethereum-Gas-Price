@@ -23,7 +23,7 @@ class GethPredictor:
     def suggest_price(self,
                       block_number: int,
                       blocks_count: int = 20,
-                      percentile: float = 60):
+                      percentile: float = 60) -> int:
         """Mimics the logic of geth to suggest a gas price
 
         Args:
