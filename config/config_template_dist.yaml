@@ -78,6 +78,9 @@ evaluation:
     # class: ClairvoyantPredictor
     # args:
     #   blocks_to_wait: 480
+    #   # comment out to use any available gas price
+    #   # see class documentation for more info
+    #   max_stdevs: 0.5
     class: GethPredictor
     args:
       blocks_count: 20
