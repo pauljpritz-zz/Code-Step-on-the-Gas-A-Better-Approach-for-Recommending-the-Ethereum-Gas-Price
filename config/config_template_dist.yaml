@@ -66,3 +66,20 @@ training:
   show_plots: True
   save_model: False
 
+evaluation:
+  # the number of blocks to skip at the begining and at the end of the dataset
+  # should be enough for the predictor to work and to leave time
+  # for blocks to be included
+  skip:
+    start: 110
+    end: 500
+  predictor:
+    # class: ClairvoyantPredictor
+    # args:
+    #   blocks_to_wait: 480
+    class: GethPredictor
+    args:
+      blocks_count: 20
+      percentile: 60
+  # a timestamp will be added to the filename
+  output_basename: tmp/stats.json

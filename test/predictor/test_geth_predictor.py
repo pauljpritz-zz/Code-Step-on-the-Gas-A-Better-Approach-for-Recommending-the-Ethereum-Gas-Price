@@ -1,7 +1,7 @@
 import unittest
 
 
-from ethpred.evaluation.geth_predictor import GethPredictor
+from ethpred.predictor.geth_predictor import GethPredictor
 
 
 class GethPredictorTest(unittest.TestCase):

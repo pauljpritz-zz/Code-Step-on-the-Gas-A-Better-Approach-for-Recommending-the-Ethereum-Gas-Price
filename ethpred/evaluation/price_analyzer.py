@@ -1,8 +1,14 @@
 from typing import Dict, Callable
 import heapq
 import functools
+from os import path
+import datetime as dt
+import json
+import logging
 
 from .prediction_stats import PredictionResult, PredictionStats
+from ..pipeline.data_reader import read_data
+from ..predictor import get as get_predictor
 
 
 @functools.total_ordering
@@ -108,11 +114,18 @@ class PriceAnalyzer:
         stats = PredictionStats()
         block_number = start_block
 
+        total_blocks_count = final_block - start_block
+
         # wait until we added transactions until end_blocks
         # and included all of them or reached the final block after which we give up
         while block_number <= end_block or \
               (waiting_for_inclusion and block_number <= final_block):
-            current_price = self.min_prices[block_number]
+            if block_number % 100 == 0:
+                logging.info("progress: %s/%s", block_number - start_block, total_blocks_count)
+            current_price = self.min_prices.get(block_number)
+            if not current_price:
+                block_number += 1
+                continue
 
             # include all possible transactions waiting for inclusion
             # in practice the price might not be enough for all the transactions
@@ -137,5 +150,35 @@ class PriceAnalyzer:
         return stats
 
 
-def run_analysis():
-    pass
+def make_filename(basename):
+    filename, extname = path.splitext(basename)
+    timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    output_file = "{0}-{1}{2}".format(filename, timestamp, extname)
+    return output_file
+
+
+def run_analysis(cnf):
+    logging.info("loading data")
+    _eth_price, gas_price = read_data(cnf)
+    logging.info("data loaded")
+
+    start_block = gas_price[-1]["block_number"] + cnf["evaluation"].get("skip", {}).get("start", 0)
+    final_block = gas_price[0]["block_number"]
+    end_block = final_block - cnf["evaluation"].get("skip", {}).get("end", 0)
+    min_prices = {v["block_number"]: v["min_price_tx"]["gas_price"] for v in gas_price}
+
+    Predictor = get_predictor(cnf["evaluation"]["predictor"]["class"])
+    predictor = Predictor.from_cnf(min_prices, cnf["evaluation"]["predictor"]["args"])
+
+    price_analyzer = PriceAnalyzer(min_prices, predictor.predict_price)
+
+    logging.info("running evaluation")
+    stats = price_analyzer.analyze_prices(start_block, end_block, final_block)
+    output_file = make_filename(cnf["evaluation"]["output_basename"])
+
+    output = dict(
+        stats=stats.to_dict(),
+        cnf=cnf,
+    )
+    with open(output_file, "w") as f:
+        json.dump(output, f)

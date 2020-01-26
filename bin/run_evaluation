@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+import sys
+import logging
+from ethpred.evaluation.price_analyzer import run_analysis
+from ethpred.utils.config_reader import read_config
+
+logging.basicConfig(level=logging.INFO)
+
+conf_file = sys.argv[1]
+cnf = read_config(conf_file)
+run_analysis(cnf)

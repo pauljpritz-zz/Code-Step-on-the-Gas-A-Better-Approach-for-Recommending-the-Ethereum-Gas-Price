@@ -30,6 +30,10 @@ class GethPredictor:
         self.percentile = min(max(0, percentile), 100)
         self.max_blocks = self.blocks_count * 5
 
+    @classmethod
+    def from_cnf(cls, min_prices: Dict[int, int], kwargs: dict):
+        return cls(min_prices, **kwargs)
+
     def predict_price(self, block_number: int) -> int:
         """Mimics the logic of geth to suggest a gas price
 
@@ -42,7 +46,7 @@ class GethPredictor:
         prices = []
         current_block_number = block_number - 1
         while block_number >= 0 and len(prices) < self.max_blocks:
-            price = self.prices[current_block_number]
+            price = self.prices.get(current_block_number, 0)
             if price == 0 and max_empty >= 0:
                 max_empty -= 1
                 continue

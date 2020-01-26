@@ -1,6 +1,6 @@
 import unittest
 
-from ethpred.evaluation.clairvoyant_predictor import ClairvoyantPredictor
+from ethpred.predictor.clairvoyant_predictor import ClairvoyantPredictor
 
 
 class ClairvoyantPredictorTest(unittest.TestCase):

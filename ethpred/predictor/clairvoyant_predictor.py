@@ -1,6 +1,10 @@
 from typing import Dict
 
 
+# any big value should do, it is just so that it is not returned by min
+NOT_FOUND_GAS = 1e20
+
+
 class ClairvoyantPredictor:
     """The ClairvoyantPredictor cheats and uses prices from the future
     to predict prices in the future. More precisely, it uses the lowest
@@ -23,6 +27,10 @@ class ClairvoyantPredictor:
         self.prices = min_prices
         self.blocks_to_wait = blocks_to_wait
 
+    @classmethod
+    def from_cnf(cls, min_prices: Dict[int, int], kwargs: dict):
+        return cls(min_prices, **kwargs)
+
     def predict_price(self, block_number: int) -> int:
         """Returns the minimal gas price in the next ``blocks_to_wait``
 
@@ -32,4 +40,4 @@ class ClairvoyantPredictor:
         """
         start_block = block_number + 1
         end_block = start_block + self.blocks_to_wait
-        return min(self.prices[i] for i in range(start_block, end_block))
+        return min(self.prices.get(i, NOT_FOUND_GAS) for i in range(start_block, end_block))
