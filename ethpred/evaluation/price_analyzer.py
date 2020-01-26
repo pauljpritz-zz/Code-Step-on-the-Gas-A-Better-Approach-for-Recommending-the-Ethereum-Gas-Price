@@ -168,7 +168,7 @@ def run_analysis(cnf):
     min_prices = {v["block_number"]: v["min_price_tx"]["gas_price"] for v in gas_price}
 
     Predictor = get_predictor(cnf["evaluation"]["predictor"]["class"])
-    predictor = Predictor.from_cnf(min_prices, cnf["evaluation"]["predictor"]["args"])
+    predictor = Predictor.from_cnf(gas_price, cnf["evaluation"]["predictor"]["args"], cnf)
 
     price_analyzer = PriceAnalyzer(min_prices, predictor.predict_price)
 

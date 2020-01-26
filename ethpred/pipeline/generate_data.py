@@ -12,7 +12,7 @@ from .fft_truncation import get_k_fft_by_percentage_energy_above_mean
 
 def generate_data(cnf: dict):
     eth_price, gas_price = read_data(cnf)
-    data = convert_to_dataframe(eth_price, gas_price, cnf)
+    data, _normalizers = convert_to_dataframe(eth_price, gas_price, cnf)
 
     # Only include the columns wanted for y
     if cnf['type'] == 'distribution':
@@ -50,7 +50,7 @@ def create_dataloaders(X_train, y_train, X_test, y_test, cnf):
 
 
 
-def sliding_window(data: np.ndarray, cnf_data: dict):
+def sliding_window(data: np.ndarray, cnf_data: dict, return_indices: bool = False):
     window_size = cnf_data['window_size']
     y_len = cnf_data['y_len']
     sample_freq = cnf_data['sample_freq']
@@ -81,6 +81,8 @@ def sliding_window(data: np.ndarray, cnf_data: dict):
     # plt.show()
     # return
 
+    if return_indices:
+        return X, y, y_idx_start
 
     return X, y
 
