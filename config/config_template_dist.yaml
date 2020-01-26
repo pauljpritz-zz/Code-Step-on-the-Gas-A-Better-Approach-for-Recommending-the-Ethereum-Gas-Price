@@ -5,6 +5,7 @@ data:
 #  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
   eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices-ticks.csv'
   gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
+  # cache_path: /some/path/to/cache/the/data.pkl
   features:
     - 'average_gas_price'
     - 'tx_count'

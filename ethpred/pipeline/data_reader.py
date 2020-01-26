@@ -1,12 +1,29 @@
 import json
+from os import path
 import gzip as gz
 from datetime import datetime
 import datetime as dt
-from pprint import pprint
+import pickle
+
 import pandas as pd
 
 
+def get_cache_path(cnf):
+    base_cache_path = cnf['data'].get('cache_path')
+    if base_cache_path is None:
+        return None
+    basename, ext = path.splitext(base_cache_path)
+    return "{0}--{1}--{2}{3}".format(
+        basename, cnf['data']['start_date'], cnf['data']['end_date'], ext)
+
+
 def read_data(cnf: dict):
+    cache_path = get_cache_path(cnf)
+
+    if cache_path is not None and path.exists(cache_path):
+        with open(cache_path, 'rb') as f:
+            return pickle.load(f)
+
     start_time = datetime.fromisoformat(cnf['data']['start_date']) - dt.timedelta(days=1.5)
     end_time = datetime.fromisoformat(cnf['data']['end_date'])
 
@@ -38,4 +55,10 @@ def read_data(cnf: dict):
                     if time < start_time:
                         break
 
-    return eth_price, gas_price
+    result = (eth_price, gas_price)
+
+    if cache_path is not None:
+        with open(cache_path, 'wb') as f:
+            pickle.dump(result, f)
+
+    return result
