@@ -2,6 +2,8 @@ from typing import Dict, Callable
 import heapq
 import functools
 
+from .prediction_stats import PredictionResult, PredictionStats
+
 
 @functools.total_ordering
 class TransactionInfo:
@@ -93,7 +95,7 @@ class PriceAnalyzer:
         self.min_prices = min_prices
         self.predict_price = predict_price
 
-    def analyze_prices(self, start_block: int, end_block: int, final_block: int):
+    def analyze_prices(self, start_block: int, end_block: int, final_block: int) -> PredictionStats:
         """Returns stats about gas price difference and the average time for inclusion
 
         Args:
@@ -103,7 +105,7 @@ class PriceAnalyzer:
                          in case one was underpriced and never got included
         """
         waiting_for_inclusion = MinHeap()
-        stats = []
+        stats = PredictionStats()
         block_number = start_block
 
         # wait until we added transactions until end_blocks
@@ -117,15 +119,7 @@ class PriceAnalyzer:
             # to be included but that will be for version 2.0
             while waiting_for_inclusion and waiting_for_inclusion.peek().gas_price >= current_price:
                 transaction = waiting_for_inclusion.pop()
-                stats.append(dict(
-                    included=True,
-                    creation_block_number=transaction.block_number,
-                    creation_gas_price=transaction.gas_price,
-                    inclusion_block_number=block_number,
-                    inclusion_gas_price=current_price,
-                    blocks_waited=block_number - transaction.block_number,
-                    gas_price_diff=transaction.gas_price - current_price,
-                ))
+                stats.add(PredictionResult(transaction, block_number, current_price))
 
             # if we already went above the end_block we are just waiting for
             # transactions to be included
@@ -138,10 +132,10 @@ class PriceAnalyzer:
         # add stats about transactions which could not be included
         while waiting_for_inclusion:
             transaction = waiting_for_inclusion.pop()
-            stats.append(dict(
-                included=False,
-                creation_block_number=transaction.block_number,
-                creation_gas_price=transaction.gas_price,
-            ))
+            stats.add(PredictionResult(transaction))
 
         return stats
+
+
+def run_analysis():
+    pass
