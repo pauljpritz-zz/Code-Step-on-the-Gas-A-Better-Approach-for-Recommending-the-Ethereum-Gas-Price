@@ -10,5 +10,6 @@ setup(
         "tqdm",
         "pandas",
         "pyyaml",
+        "sortedcontainers",
     ],
 )
