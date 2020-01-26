@@ -2,10 +2,12 @@ import numpy as np
 import pandas as pd
 import torch.utils.data as du
 import torch
+import matplotlib.pyplot as plt
 from .data_reader import read_data
 from .to_pandas import convert_to_dataframe
 from .dataset_objects import TimeSeriesData
 from .calc_distributions import generate_distribution
+from .fft_truncation import get_k_fft_by_percentage_energy_above_mean
 
 
 def generate_data(cnf: dict):
@@ -66,6 +68,20 @@ def sliding_window(data: np.ndarray, cnf_data: dict):
     y_idx_start = X_idx_start + window_size
     y_idx = np.arange(y_len)[None, :] + y_idx_start[:, None]
     y = data[y_idx]
+
+    # print("before fft \n", X[0, :, 0])
+    # x_b = X[0, :, 0]
+    if cnf_data['fft']:
+        X, avg_k = get_k_fft_by_percentage_energy_above_mean(X, cnf_data['energy'], False)
+    #     print(X.shape)
+    #     print(avg_k)
+    # print("after fft \n", X[0, :, 0])
+    # plt.plot(x_b)
+    # plt.plot(X[0, :, 0])
+    # plt.show()
+    # return
+
+
     return X, y
 
 
