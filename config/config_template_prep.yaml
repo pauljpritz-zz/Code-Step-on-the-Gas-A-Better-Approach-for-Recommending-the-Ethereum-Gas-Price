@@ -3,9 +3,9 @@ testing: False
 type: 'simple'
 data:
 #  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
-  eth_price_file: '/home/hobbit/Documents/marble_data/eth-prices-ticks.csv'
-  gas_price_file: '/home/hobbit/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
-  data_path: '/home/hobbit/Documents/marble_data/prep.pickle'
+  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices-ticks.csv'
+  gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
+  data_path: '/home/pjp18/Documents/marble_data/prep.pickle'
   features:
     - 'average_gas_price'
     - 'tx_count'
@@ -23,13 +23,13 @@ data:
 #  start_date: '2020-01-10'
 #  end_date: '2020-01-12'
   window_size: 288
-  y_len: 36
+  y_len: 12
   sample_freq: 2
   train_prop: 0.7
   batch_size: 32
   y_cols:
-#    - 'min_price_tx'
-    - 'average_gas_price'
+    - 'min_price_tx'
+#    - 'average_gas_price'
 #    - 'std_dev'
   scaling:
     normalizer: minmax
@@ -55,10 +55,10 @@ data:
   energy: 0.8
 model:
   hidden_size: 128
-  input_size: 5
+  input_size: 6
   num_layers: 2
   # pred_steps must match y_len
-  pred_steps: 36
+  pred_steps: 12
   dropout: 0.01
   linear_units: 512
 training:
@@ -68,7 +68,7 @@ training:
     args: {}
   num_epochs: 20
   learning_rate: 0.0015
-  log_path: '/home/hobbit/Documents/marble_logs/'
+  log_path: '/home/pjp18/Documents/marble_logs/'
   show_plots: True
-  save_model: False
+  save_model: True
 
