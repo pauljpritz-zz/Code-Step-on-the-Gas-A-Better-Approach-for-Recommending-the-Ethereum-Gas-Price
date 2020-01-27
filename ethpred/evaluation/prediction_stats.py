@@ -71,7 +71,7 @@ class PredictionStats:
         return sum(1 for v in self.stats if v.included)
 
     def compute_average_gas_price(self):
-        prices = [v.inclusion_gas_price for v in self.stats if v.included]
+        prices = [v.transaction.gas_price for v in self.stats if v.included]
         return sum(prices) / len(prices)
 
     def to_dict(self):
