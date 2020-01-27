@@ -4,6 +4,8 @@ import bisect
 
 import numpy as np
 import torch
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import MinMaxScaler
 
 from .predictor import Predictor
 from ..pipeline.inference import predict_prices
@@ -21,10 +23,11 @@ class ModelPredictor(Predictor):
         self.timestamps = timestamps
         self.predictions = predictions
         self.percentile = percentile
+        self.trends = self._compute_trends()
 
     def _find_predictions(self, timestamp):
         index = bisect.bisect_right(self.timestamps, timestamp) - 1
-        return self.predictions[index]
+        return self.predictions[index], self.trends[index]
 
     @classmethod
     def from_cnf(cls, min_prices: List[dict], kwargs: dict, cnf: dict):
@@ -39,7 +42,29 @@ class ModelPredictor(Predictor):
             datetime = self.get_datetime(block_number)
         return datetime
 
+    def _compute_trends(self):
+        trends = []
+        for pred in self.predictions:
+            trend = self.get_trend(pred)
+            trends.append(trend)
+        scaler = MinMaxScaler((-1, 1))
+        trends = scaler.fit_transform(np.array(trends).reshape(-1, 1)).reshape(-1)
+        return trends
+
+    def get_trend(self, predictions):
+        model = LinearRegression()
+        X = np.arange(len(predictions)).reshape(-1, 1)
+        model.fit(X, predictions)
+        return model.coef_[0]
+
     def predict_price(self, block_number: int) -> int:
         datetime = self.get_block_datetime(block_number)
-        predictions = self._find_predictions(datetime)
-        return np.percentile(predictions, q=self.percentile)
+        predictions, trend = self._find_predictions(datetime)
+        value = np.percentile(predictions, q=self.percentile)
+        if trend >= 0.5:
+            return value
+        elif trend >= 0:
+            coefficient = 0.5 + trend
+        else:
+            coefficient = 1 - 0.9 * abs(trend)
+        return value * coefficient

@@ -1,5 +1,7 @@
 from typing import List
 
+import numpy as np
+
 
 class PredictionResult:
     """Contains the transaction block number and gas price as well
@@ -74,6 +76,11 @@ class PredictionStats:
         prices = [v.transaction.gas_price for v in self.stats if v.included]
         return sum(prices) / len(prices)
 
+    def compute_median_gas_price(self):
+        prices = [v.transaction.gas_price for v in self.stats if v.included]
+        return np.median(prices).tolist()
+
+
     def to_dict(self):
         total_blocks_waited = self.compute_total_blocks_waited()
         total_gas_price_diff = self.compute_total_gas_price_diff()
@@ -83,6 +90,7 @@ class PredictionStats:
             total_count=total_count,
             included_count=included_count,
             average_gas_price=self.compute_average_gas_price(),
+            median_gas_price=self.compute_median_gas_price(),
             not_included_count=total_count - included_count,
             total_gas_price_diff=total_gas_price_diff,
             total_blocks_waited=total_blocks_waited,

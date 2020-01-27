@@ -11,5 +11,6 @@ setup(
         "pandas",
         "pyyaml",
         "sortedcontainers",
+        "scikit-learn",
     ],
 )
