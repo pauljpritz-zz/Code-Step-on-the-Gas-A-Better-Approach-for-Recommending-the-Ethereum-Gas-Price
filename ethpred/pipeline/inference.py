@@ -1,6 +1,7 @@
 from typing import Tuple, List
 import datetime as dt
 
+import numpy as np
 import torch
 
 from .data_reader import read_data

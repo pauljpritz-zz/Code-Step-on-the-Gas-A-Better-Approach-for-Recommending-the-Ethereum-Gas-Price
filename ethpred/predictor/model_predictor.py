@@ -14,10 +14,13 @@ class ModelPredictor(Predictor):
     ideal gas cost
     """
     def __init__(self, gas_price: List[dict],
-                 timestamps: List[dt.datetime], predictions: List[np.ndarray]):
+                 timestamps: List[dt.datetime],
+                 predictions: List[np.ndarray],
+                 percentile: int = 20):
         super().__init__(gas_price)
         self.timestamps = timestamps
         self.predictions = predictions
+        self.percentile = percentile
 
     def _find_predictions(self, timestamp):
         index = bisect.bisect_right(self.timestamps, timestamp) - 1
@@ -27,7 +30,7 @@ class ModelPredictor(Predictor):
     def from_cnf(cls, min_prices: List[dict], kwargs: dict, cnf: dict):
         model = torch.load(kwargs['model_path'])
         timestamps, predictions = predict_prices(cnf, model)
-        return cls(min_prices, timestamps, predictions)
+        return cls(min_prices, timestamps, predictions, kwargs.get('percentile', 20))
 
     def get_block_datetime(self, block_number: int) -> int:
         datetime = self.get_datetime(block_number)
@@ -38,3 +41,5 @@ class ModelPredictor(Predictor):
 
     def predict_price(self, block_number: int) -> int:
         datetime = self.get_block_datetime(block_number)
+        predictions = self._find_predictions(datetime)
+        return np.percentile(predictions, q=self.percentile)

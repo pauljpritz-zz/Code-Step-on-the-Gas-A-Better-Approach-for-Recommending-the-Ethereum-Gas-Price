@@ -26,11 +26,13 @@ class GethPredictor(Predictor):
     def __init__(self,
                  gas_price: List[dict],
                  blocks_count: int = 20,
-                 percentile: float = 60):
+                 percentile: float = 60,
+                 factor: float = 1.0):
         super().__init__(gas_price)
         self.blocks_count = blocks_count
         self.percentile = min(max(0, percentile), 100)
         self.max_blocks = self.blocks_count * 5
+        self.factor = factor
 
     @classmethod
     def from_cnf(cls, min_prices: List[dict], kwargs: dict, _cnf: dict):
@@ -57,4 +59,4 @@ class GethPredictor(Predictor):
         suggested_price = int(np.percentile(prices, q=self.percentile))
         if suggested_price >= MAX_PRICE:
             suggested_price = MAX_PRICE
-        return suggested_price
+        return suggested_price * self.factor
