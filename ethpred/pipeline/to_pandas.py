@@ -1,9 +1,10 @@
 from datetime import datetime
+
 import pandas as pd
 import numpy as np
-import copy
-import matplotlib.pyplot as plt
+
 from .calc_distributions import generate_distribution
+from . import normalizers
 
 
 def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
@@ -19,13 +20,13 @@ def convert_to_dataframe(eth_prices: dict, gas_price: list, cnf: dict):
 
     data = resample_data(data, cnf)
 
-    data = normalise_data(data, cnf)
+    data, data_normalizers = normalise_data(data, cnf)
 
     print(data[data.isna().any(axis=1)])
 
     print(data.head())
 
-    return data
+    return data, data_normalizers
 
 
 def resample_data(data: pd.DataFrame, cnf: dict):
@@ -101,15 +102,11 @@ def join_datasets(cnf, eth_prices, gas_price_dict):
     return data
 
 
+
 def scale_array(array, scale_method):
-    if scale_method == 'log':
-        col = np.log(array)
-        col[np.isneginf(col)] = 0
-        return col
-    elif scale_method == 'minmax':
-        min_value = np.min(array)
-        result = (array - min_value) / (np.max(array) - min_value)
-        return result.fillna(0)
+    normalizer = normalizers.create(scale_method)
+    scaled = normalizer.fit_transform(array)
+    return scaled, normalizer
 
 
 def remove_outliers(data: pd.DataFrame, columns):
@@ -126,8 +123,11 @@ def remove_outliers(data: pd.DataFrame, columns):
 def normalise_data(data: pd.DataFrame, cnf):
     data = remove_outliers(data, cnf['data'].get('remove_outliers', []))
     scaling = cnf['data']['scaling']
+    normalizers = {}
     for column in scaling['columns']:
         if column in data:
-            data[column] = scale_array(data[column], scaling['normalizer'])
+            scaled, normalizer = scale_array(data[column], scaling['normalizer'])
+            data[column] = scaled
+            normalizers[column] = normalizer
     # print('after scaling\n', data.head())
-    return data
+    return data, normalizers

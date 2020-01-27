@@ -4,3 +4,4 @@ data/
 results/
 *.egg-info/
 tmp/
+*.bak

@@ -1,14 +1,15 @@
-from typing import Dict
+from typing import List
 import math
 
 from sortedcontainers import SortedList
 
+from .predictor import Predictor
 
 # any big value should do, it is just so that it is not returned by min
 NOT_FOUND_GAS = 1e20
 
 
-class ClairvoyantPredictor:
+class ClairvoyantPredictor(Predictor):
     """The ClairvoyantPredictor cheats and uses prices from the future
     to predict prices in the future. More precisely, it uses the lowest
     price up to the given number of blocks to predict the price value
@@ -17,16 +18,16 @@ class ClairvoyantPredictor:
     could do by waiting for at most X blocks before submitting the transaction
 
     Args:
-        min_prices: A mapping of block height to minimum price
+        gas_price: A list of gas prices information about blocks
         blocks_to_wait: The maximum number of blocks to wait for the transactions
         to be included
         max_stdevs: the maximum number of standard deviations under which the gas price
                     is not allowed to be. This is used to avoid using a total
                     outlier gas price
     """
-    def __init__(self, min_prices: Dict[int, int], blocks_to_wait: int = 240,
+    def __init__(self, gas_price: List[dict], blocks_to_wait: int = 240,
                  max_stdevs: float = None):
-        self.prices = min_prices
+        super().__init__(gas_price)
         self.blocks_to_wait = blocks_to_wait
         self.max_stdevs = max_stdevs
         self._available_prices = SortedList()
@@ -37,7 +38,7 @@ class ClairvoyantPredictor:
         self._rolling_squared_total = 0
 
     @classmethod
-    def from_cnf(cls, min_prices: Dict[int, int], kwargs: dict):
+    def from_cnf(cls, min_prices: List[dict], kwargs: dict, _cnf: dict):
         return cls(min_prices, **kwargs)
 
     def current_price_mean(self):
@@ -50,14 +51,14 @@ class ClairvoyantPredictor:
         return math.sqrt(variance)
 
     def _add_price(self, block_number):
-        price = self.prices.get(block_number)
+        price = self.get_min_price(block_number)
         if price:
             self._rolling_price_total += price
             self._rolling_squared_total += price * price
             self._available_prices.add(price)
 
     def _remove_price(self, block_number):
-        price = self.prices.get(block_number)
+        price = self.get_min_price(block_number)
         if price:
             try:
                 self._available_prices.remove(price)

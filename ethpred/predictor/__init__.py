@@ -1,5 +1,6 @@
 from .clairvoyant_predictor import ClairvoyantPredictor
 from .geth_predictor import GethPredictor
+from .model_predictor import ModelPredictor
 
 
 def get(name):

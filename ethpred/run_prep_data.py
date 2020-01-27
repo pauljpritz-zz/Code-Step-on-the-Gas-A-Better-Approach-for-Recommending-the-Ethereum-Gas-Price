@@ -11,7 +11,7 @@ from .pipeline.data_reader import read_data
 
 def prep_data(cnf: dict):
     eth_price, gas_price = read_data(cnf)
-    data = convert_to_dataframe(eth_price, gas_price, cnf)
+    data, _normalizers = convert_to_dataframe(eth_price, gas_price, cnf)
     data.to_pickle(cnf['data']['data_path'])
     print("Data saved to: ", cnf['data']['data_path'])
 
