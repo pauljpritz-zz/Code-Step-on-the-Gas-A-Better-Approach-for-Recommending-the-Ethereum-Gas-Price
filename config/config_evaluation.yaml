@@ -1,0 +1,91 @@
+testing: false
+type: simple
+data:
+  batch_size: 32
+  # data_path: /home/hobbit/Documents/marble_data/prep.pickle
+  eth_price_file: /home/pjp18/Documents/marble_data/eth-prices-ticks.csv
+  gas_price_file: /home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz
+  cache_path: /home/pjp18/Documents/marble_data/prep.pickle
+  start_date: '2019-11-20'
+  end_date: '2019-11-25'
+  early_start: false
+  energy: 0.8
+  eth_price_features:
+    - value
+    - date
+  features:
+    - average_gas_price
+    - tx_count
+  fft: true
+  inc_transactions: false
+  lagged_cols:
+    - average_gas_price
+  nested_features:
+    - max_price_tx: gas_price
+    - min_price_tx: gas_price
+  remove_outliers:
+    - average_gas_price
+    - max_price_tx
+    - min_price_tx
+    - mean
+    - std_dev
+    - value
+  resample: 5T
+  sample_freq: 2
+  scaling:
+    columns:
+      - average_gas_price
+      - average_gas_price_lagged
+      - max_price_tx
+      - min_price_tx
+      - tx_count
+      - value
+      - mean
+      - std_dev
+    normalizer: minmax
+  train_prop: 0.7
+  window_size: 288
+  y_cols:
+    - min_price_tx
+  y_len: 24
+model:
+  dropout: 0.01
+  hidden_size: 128
+  input_size: 6
+  linear_units: 512
+  num_layers: 2
+  pred_steps: 24
+training:
+  learning_rate: 0.0015
+  log_path: /home/pjp18/Documents/marble_logs/
+  num_epochs: 20
+  optimizer:
+    args: {}
+    class: Adam
+  save_model: true
+  show_plots: true
+evaluation:
+  # the number of blocks to skip at the begining and at the end of the dataset
+  # should be enough for the predictor to work and to leave time
+  # for blocks to be included
+  skip:
+    start: 110
+    end: 500
+  predictor:
+    # class: ClairvoyantPredictor
+    # args:
+    #   blocks_to_wait: 480
+    #   # comment out to use any available gas price
+    #   # see class documentation for more info
+    #   max_stdevs: 0.5
+    # class: GethPredictor
+    # args:
+    #   blocks_count: 20
+    #   percentile: 60
+    #   factor: 0.8
+    class: ModelPredictor
+    args:
+      model_path: /home/pjp18/Documents/marble_logs/model_2020-01-27T10_33_25.943376/model.pickle
+      percentile: 20
+  # a timestamp will be added to the filename
+  output_basename: tmp/stats.json
