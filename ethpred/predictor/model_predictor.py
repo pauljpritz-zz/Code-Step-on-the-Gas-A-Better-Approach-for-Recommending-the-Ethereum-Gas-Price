@@ -18,11 +18,13 @@ class ModelPredictor(Predictor):
     def __init__(self, gas_price: List[dict],
                  timestamps: List[dt.datetime],
                  predictions: List[np.ndarray],
-                 percentile: int = 20):
+                 percentile: int = 20,
+                 utility: float = 0.9):
         super().__init__(gas_price)
         self.timestamps = timestamps
         self.predictions = predictions
         self.percentile = percentile
+        self.utility = utility
         self.trends = self._compute_trends()
 
     def _find_predictions(self, timestamp):
@@ -33,7 +35,8 @@ class ModelPredictor(Predictor):
     def from_cnf(cls, min_prices: List[dict], kwargs: dict, cnf: dict):
         model = torch.load(kwargs['model_path'])
         timestamps, predictions = predict_prices(cnf, model)
-        return cls(min_prices, timestamps, predictions, kwargs.get('percentile', 20))
+        return cls(min_prices, timestamps, predictions,
+                   kwargs.get('percentile', 20), kwargs.get('utility', 0.9))
 
     def get_block_datetime(self, block_number: int) -> int:
         datetime = self.get_datetime(block_number)
@@ -47,7 +50,7 @@ class ModelPredictor(Predictor):
         for pred in self.predictions:
             trend = self.get_trend(pred)
             trends.append(trend)
-        scaler = MinMaxScaler((-1, 1))
+        scaler = MinMaxScaler((-2, 0))
         trends = scaler.fit_transform(np.array(trends).reshape(-1, 1)).reshape(-1)
         return trends
 
@@ -61,10 +64,5 @@ class ModelPredictor(Predictor):
         datetime = self.get_block_datetime(block_number)
         predictions, trend = self._find_predictions(datetime)
         value = np.percentile(predictions, q=self.percentile)
-        if trend >= 0.5:
-            return value
-        elif trend >= 0:
-            coefficient = 0.5 + trend
-        else:
-            coefficient = 1 - 0.9 * abs(trend)
+        coefficient = np.exp(trend) * self.utility
         return value * coefficient
