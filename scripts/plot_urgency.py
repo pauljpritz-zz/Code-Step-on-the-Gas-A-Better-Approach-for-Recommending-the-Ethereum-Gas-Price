@@ -1,6 +1,13 @@
 import glob
 import json
+import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.style as style
+
+
+style.use('ggplot')
+matplotlib.rcParams['font.family'] = "DejaVu Sans"
+matplotlib.rc('axes',edgecolor='darkgrey')
 
 
 files = glob.glob("./tmp/stats*.json")
@@ -33,14 +40,16 @@ x = [v["utility"] for v in stats]
 y_wait = [v["average_blocks_waited"] for v in stats]
 y_price = [v["average_gas_price"] for v in stats]
 
-
-_fig, ax = plt.subplots()
-l1, = plt.plot(x, y_wait, label="Blocks to wait")
-ax.set_ylabel("Average number of blocks to wait")
+fig = plt.figure(figsize=(4.8041, 3))
+ax = plt.subplot()
+l1, = ax.plot(x, y_wait, color="royalblue", label="Blocks to wait")
+ax.set_ylabel("Number of blocks to wait")
 ax.set_xlabel("Urgency parameter value")
 ax2 = ax.twinx()
-l2, = ax2.plot(x, y_price, "r", label="Gas price")
-ax2.set_ylabel("Average gas price")
-plt.legend(handles=[l1, l2], loc='upper center')
+l2, = ax2.plot(x, y_price, color="tomato", label="Gas price", )
+ax2.set_ylabel("Gas price")
+plt.legend(handles=[l1, l2], loc='upper center', prop={"size": 8})
+ax.grid(color='whitesmoke')
+ax.set_facecolor('white')
 plt.tight_layout()
 plt.savefig("urgency-effect.pdf")
