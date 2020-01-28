@@ -3,11 +3,11 @@ type: simple
 data:
   batch_size: 32
   # data_path: /home/hobbit/Documents/marble_data/prep.pickle
-  eth_price_file: /home/daniel/Dropbox/data/marble2020/eth-prices-ticks.csv
-  gas_price_file: /home/daniel/Dropbox/data/marble2020/gas-prices-with-txs-3months.jsonl.gz
-  cache_path: /home/daniel/workspace/organizations/pauljpritz/marble_2020/tmp/cached-data.pkl
+  eth_price_file: /home/pjp18/Documents/marble_data/eth-prices-ticks.csv
+  gas_price_file: /home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz
+  cache_path: /home/pjp18/Documents/marble_data/prep.pickle
   start_date: '2019-11-20'
-  end_date: '2019-11-27'
+  end_date: '2019-11-26'
   early_start: false
   energy: 0.8
   eth_price_features:
@@ -57,7 +57,7 @@ model:
   pred_steps: 12
 training:
   learning_rate: 0.0015
-  log_path: /home/daniel/workspace/organizations/pauljpritz/marble_2020/tmp/logs
+  log_path: /home/pjp18/Documents/marble_logs/
   num_epochs: 20
   optimizer:
     args: {}

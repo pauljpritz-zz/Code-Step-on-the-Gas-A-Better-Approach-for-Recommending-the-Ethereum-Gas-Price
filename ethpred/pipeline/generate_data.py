@@ -24,8 +24,9 @@ def generate_data(cnf: dict):
 
     data = data.to_numpy()
 
-    X, y = sliding_window(data, cnf['data'])
+    print('before sliding window:', data.shape)
 
+    X, y = sliding_window(data, cnf['data'])
     y = y[:, :, y_col_idxs]
     y = np.squeeze(y)
 
@@ -60,9 +61,12 @@ def sliding_window(data: np.ndarray, cnf_data: dict, return_indices: bool = Fals
     if overlap != 0:
         data = data[overlap:]
 
+
     X_idx_start = sample_freq * np.arange(
         (data.shape[0] - window_size - y_len) // (sample_freq + 1))
+
     X_idx = np.arange(window_size)[None, :] + X_idx_start[:, None]
+
     X = data[X_idx]
 
     y_idx_start = X_idx_start + window_size

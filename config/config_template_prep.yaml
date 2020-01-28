@@ -18,10 +18,8 @@ data:
     - 'date'
   lagged_cols:
     - average_gas_price
-  start_date: '2019-11-10'
-  end_date: '2019-11-25'
-#  start_date: '2020-01-10'
-#  end_date: '2020-01-12'
+  start_date: '2019-11-05'
+  end_date: '2019-11-20'
   window_size: 288
   y_len: 12
   sample_freq: 2

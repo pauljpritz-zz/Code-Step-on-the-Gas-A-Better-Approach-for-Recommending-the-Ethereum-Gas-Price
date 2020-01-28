@@ -116,6 +116,11 @@ class Logger:
             plt.plot(x, y_test, color='b', label='True')
             plt.plot(x, y_pred, color='r', label='Predicted')
 
+            preds = np.stack([x, y_pred])
+            true_data = np.stack([x, y_test])
+            np.save(self.save_path+'preds.npy', preds)
+            np.save(self.save_path+'true.npy', true_data)
+
         plt.legend()
         plt.savefig(self.save_path + 'test_prediction_example.png')
         if self.cnf['training']['show_plots']:
