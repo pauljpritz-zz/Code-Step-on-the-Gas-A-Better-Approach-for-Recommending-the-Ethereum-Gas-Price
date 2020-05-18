@@ -19,7 +19,6 @@ def predict_prices(cnf, model) -> Tuple[List[dt.datetime], List[np.ndarray]]:
     X = torch.from_numpy(X).float()
     with torch.no_grad():
         normalized_predictions = model(X).numpy()
-    # FIXME: only works when predicting a single series
     normalizer = normalizers[cnf['data']['y_cols'][0]]
     predictions = normalizer.inverse_transform(normalized_predictions)
     return timestamps, predictions

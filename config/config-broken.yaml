@@ -2,10 +2,10 @@ testing: false
 type: simple
 data:
   batch_size: 32
-  # data_path: /home/hobbit/Documents/marble_data/prep.pickle
-  eth_price_file: /home/pjp18/Documents/marble_data/eth-prices-ticks.csv
-  gas_price_file: /home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz
-  cache_path: /home/pjp18/Documents/marble_data/prep.pickle
+  # data_path: /path/to/prep.pickle
+  eth_price_file: /path/to/eth-prices-ticks.csv
+  gas_price_file: /path/to/gas-prices-with-txs-3months.jsonl.gz
+  cache_path: /path/to/prep.pickle
   start_date: '2019-11-20'
   end_date: '2019-11-26'
   early_start: false
@@ -57,7 +57,7 @@ model:
   pred_steps: 12
 training:
   learning_rate: 0.0015
-  log_path: /home/pjp18/Documents/marble_logs/
+  log_path: /path/to/marble_logs/
   num_epochs: 20
   optimizer:
     args: {}
@@ -86,9 +86,9 @@ evaluation:
     class: ModelPredictor
     args:
       # 24 steps
-      # model_path: /home/daniel/workspace/organizations/pauljpritz/marble_2020/tmp/logs/model_2020-01-26T20_39_33.261089/model.pickle
+      # model_path: /path/to/model.pickle
       # 12 steps
-      model_path: /home/daniel/workspace/organizations/pauljpritz/marble_2020/tmp/logs/model_2020-01-27T13_47_24.133413/model.pickle
+      model_path: /path/to/model.pickle
       percentile: 20
       utility: 0.8
   # a timestamp will be added to the filename

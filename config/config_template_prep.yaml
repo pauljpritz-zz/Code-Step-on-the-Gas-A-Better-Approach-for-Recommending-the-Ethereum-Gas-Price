@@ -2,10 +2,10 @@ testing: False
 # Denote the type of model you want: simple or distribution
 type: 'simple'
 data:
-#  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices.json'
-  eth_price_file: '/home/pjp18/Documents/marble_data/eth-prices-ticks.csv'
-  gas_price_file: '/home/pjp18/Documents/marble_data/gas-prices-with-txs-3months.jsonl.gz'
-  data_path: '/home/pjp18/Documents/marble_data/prep.pickle'
+#  eth_price_file: '/path/to/eth-prices.json'
+  eth_price_file: '/path/to/eth-prices-ticks.csv'
+  gas_price_file: '/path/to/gas-prices-with-txs-3months.jsonl.gz'
+  data_path: '/path/to/prep.pickle'
   features:
     - 'average_gas_price'
     - 'tx_count'
@@ -66,7 +66,7 @@ training:
     args: {}
   num_epochs: 20
   learning_rate: 0.0015
-  log_path: '/home/pjp18/Documents/marble_logs/'
+  log_path: '/path/to/marble_logs/'
   show_plots: True
   save_model: True
 
